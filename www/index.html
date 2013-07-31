@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html manifest="/app.manifest">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Meteor Rider Example</title>
+    </head>
+    <body>
+        <div class="app">
+            <h1>Meteor Rider, Loading</h1>
+            Loading....
+        </div>
+        <!-- include the core cordova JS file for your app, like normal -->
+        <script type="text/javascript" src="cordova-2.4.0.js"></script>
+        <!-- any other custom "on device" code here -->
+        <!-- ... -->
+        <!-- jquery or zepto libraries, as a MeteorRider dependancy -->
+        <script type="text/javascript" src="js/zepto.min.js"></script>
+        <!-- this JS file, will attempt to take over the HTML/CSS/JS with the meteor app -->
+        <script type="text/javascript">
+          /**
+           * Configuration is very simple... we need to know the meteorUrl
+           * and your Meteor App might want to know what version of phonegap you are on
+           * and your Meteor App might want to know what version of your phonegap app you are on
+           */
+          var __MeteorRiderConfig__ = {
+            meteorUrl:  "http://leaderboard.meteor.com/",
+            phonegapVersion: 3.0,
+            phonegapAppVersion: 0.1
+          }
+        </script>
+        <script type="text/javascript" src="js/meteor-rider.js"></script>
+    </body>
+</html>
