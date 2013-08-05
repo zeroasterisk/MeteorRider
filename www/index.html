@@ -11,6 +11,9 @@
         <div class="app">
             <h1>Meteor Rider, Loading</h1>
             Loading....
+            <div id="phonegapapp-test" style="display: none;">
+              <!-- put whatever native device testing you want here, easy to toggle in phonegapapp.js -->
+            </div>
         </div>
         <!-- include the core cordova JS file for your app, like normal -->
         <script type="text/javascript" src="cordova-2.4.0.js"></script>
@@ -18,7 +21,10 @@
         <!-- ... -->
         <!-- jquery or zepto libraries, as a MeteorRider dependancy -->
         <script type="text/javascript" src="js/zepto.min.js"></script>
-        <!-- this JS file, will attempt to take over the HTML/CSS/JS with the meteor app -->
+        <!-- basics for our phonegapapp (Native, on Device JS) -->
+        <script type="text/javascript" src="js/phonegapapp.js"></script>
+        <!-- this JS file, the code needed for MeteorRider -->
+        <script type="text/javascript" src="js/meteor-rider.js"></script>
         <script type="text/javascript">
           /**
            * Configuration is very simple... we need to know the meteorUrl
@@ -29,8 +35,12 @@
             meteorUrl:  "http://leaderboard.meteor.com/",
             phonegapVersion: 3.0,
             phonegapAppVersion: 0.1
-          }
+          };
+
+          /**
+            * Start up the phonegap
+            */
+           phonegapapp.initialize();
         </script>
-        <script type="text/javascript" src="js/meteor-rider.js"></script>
     </body>
 </html>

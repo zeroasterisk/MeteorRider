@@ -55,8 +55,6 @@ var MeteorRider = {
           console.log(meteorUrl);
         console.log(data);
         // replace the document with the new document/data
-        // TODO: investigate just replacing the HEAD
-        // TODO: investigate loading the JS with a callback (~loaded)
         document.open();
         document.write(data);
         document.close();
@@ -64,14 +62,8 @@ var MeteorRider = {
         $(document).trigger('DOMContentLoaded');
         $(document).trigger('load');
         $(document).trigger('complete');
-        // finally - load the URL
-        // : temp hack, need to know how to tell Meteor to initialize rendering/URL here
-        setTimeout( function() { Meteor.Router.to('/'); }, 200);
-        // TODO: trigger custom callback event for Meteor
       }
     });
   }
 }
-// auto-run this thang!
-MeteorRider.init();
 //});
