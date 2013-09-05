@@ -7,7 +7,7 @@ NOTE: This is perhaps the "simplest" approach as of right now...
 but I have noticed when using PhoneGap plugins some complications with this approach and am in fact using 
 the "iframe" appraoch from @raix for larger projects.
 
-For more info, "a comparison of approaches":http://zeroasterisk.com/2013/08/22/meteor-phonegapcordova-roundup-fall-2013/
+For more info, [a comparison of approaches](http://zeroasterisk.com/2013/08/22/meteor-phonegapcordova-roundup-fall-2013/)
 
 That said, this remains a very fast and simple approach - keeping it an option makes sense.
 
