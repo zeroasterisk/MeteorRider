@@ -3,6 +3,15 @@ MeteorRider
 
 An approach for integrating PhoneGap/Cordova + Meteor (telling PhoneGap where to get content from, letting Meteor hijack your PhoneGap app's HTML/CSS/JS)
 
+NOTE: This is perhaps the "simplest" approach as of right now... 
+but I have noticed when using PhoneGap plugins some complications with this approach and am in fact using 
+the "iframe" appraoch from @raix for larger projects.
+
+For more info, "a comparison of approaches":http://zeroasterisk.com/2013/08/22/meteor-phonegapcordova-roundup-fall-2013/
+
+That said, this remains a very fast and simple approach - keeping it an option makes sense.
+
+
 Installation / Usage
 --------------
 
@@ -74,7 +83,7 @@ This is the "Option 3" approach I've been thinking about for a while.
 Inspiration and collaboration from:
 
 * Abigail: https://github.com/awatson1978/cordova-phonegap
-* Morten: https://github.com/raix/Meteor-phonegap-push
+* Morten: https://github.com/raix/Meteor-Cordova
 
 I'd like to thank both of them for communicating with me while figuring out what my
 options were and for collaboration on this project.
@@ -83,3 +92,4 @@ Background:
 
 http://prezi.com/ig9gjm11mwsi/from-zero-to-mobile-web-app-in-sixty-minutes/
 
+http://zeroasterisk.com/2013/08/22/meteor-phonegapcordova-roundup-fall-2013/
