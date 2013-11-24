@@ -57,7 +57,7 @@ var MeteorRider = {
         
         // set the window.location object correctly so iron-router 
         // and other packages that depend on window.location work correctly
-        window.history.pushState({}, "", "/");
+        window.history.replaceState({}, "", meteorUrl);
         
         // replace the document with the new document/data
         document.open();
