@@ -54,6 +54,11 @@ var MeteorRider = {
         data = data.replace(/(href|src|manifest)\=\"\//gm, '$1="' + meteorUrl + '/');
           console.log(meteorUrl);
         console.log(data);
+        
+        // set the window.location object correctly so iron-router 
+        // and other packages that depend on window.location work correctly
+        window.history.pushState({}, "", "/");
+        
         // replace the document with the new document/data
         document.open();
         document.write(data);
