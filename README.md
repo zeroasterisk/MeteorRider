@@ -26,6 +26,8 @@ cp MeteorRider/www/index.html pathtoyourphonegap/assets/www/index.html
 cp MeteorRider/www/js/* pathtoyourphonegap/assets/www/js/
 ```
 
+To enable hot code push reload, without losing the phonegap context, copy the code from MeteorRider/startup.js to your meteor app.
+
 Configuration
 --------------
 
