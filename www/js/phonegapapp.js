@@ -49,7 +49,8 @@ phonegapapp = {
     console.log('Received Event: ' + id);
   },
   // Setup MeteorRider
-  meteorRider: function() {
+  meteorRider: function(currentPath) {
+    currentPath = typeof currentPath !== 'undefined' ? currentPath : '';
     MeteorRider.init();
   }
 };
