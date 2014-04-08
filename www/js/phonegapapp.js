@@ -50,7 +50,8 @@ phonegapapp = {
   },
   // Setup MeteorRider
   meteorRider: function(currentPath) {
-    currentPath = typeof currentPath !== 'undefined' ? currentPath : '';
-    MeteorRider.init();
+    // set 'currentPath' to empty string if not passed
+    currentPath = typeof currentPath === 'string' ? currentPath : '';
+    MeteorRider.init(currentPath);
   }
 };

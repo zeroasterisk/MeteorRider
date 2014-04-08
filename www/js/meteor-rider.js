@@ -30,7 +30,7 @@
 
 //define('MeteorRider', ['jquery'], function($) {
 var MeteorRider = {
-  init: function() {
+  init: function(currentPath) {
     var meteorUrl = __MeteorRiderConfig__.meteorUrl;
     if (! (meteorUrl.length > 0)) {
       console.error('MeteorRider: error: unable to determine config.meteorUrl');
@@ -55,6 +55,8 @@ var MeteorRider = {
           console.log(meteorUrl);
         console.log(data);
         
+        // set 'currentPath' to empty string if not passed
+        currentPath = typeof currentPath === 'string' ? currentPath : '';
         // set the window.location object correctly so iron-router 
         // and other packages that depend on window.location work correctly
         window.history.replaceState({}, "", meteorUrl + currentPath);
