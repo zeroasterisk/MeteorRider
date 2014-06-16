@@ -50,18 +50,27 @@ var MeteorRider = {
         console.log("MeteorRider success");
         console.log(textStatus);
         console.log(data);
-        // update URLs
+        // update URLs to include domain prefix
         data = data.replace(/(href|src|manifest)\=\"\//gm, '$1="' + meteorUrl + '/');
-          console.log(meteorUrl);
+        console.log(meteorUrl);
         console.log(data);
         
         // set 'currentPath' to empty string if not passed
-        currentPath = typeof currentPath === 'string' ? currentPath : '';
+        currentPath = (typeof currentPath === 'string' ? currentPath : '');
         // set the window.location object correctly so iron-router 
         // and other packages that depend on window.location work correctly
-        window.history.replaceState({}, "", meteorUrl + currentPath);
+        if (typeof window.history.replaceState === 'function') {
+          // window.history.replaceState() not supported in all clients
+          window.history.replaceState({}, "", meteorUrl + currentPath);
+        } else {
+          // TODO: should we do window.history.add() or something?
+        }
         
         // replace the document with the new document/data
+        //   this is the REAL hijacking... 
+        //     all old JS remains (unless overwritten, name collision)
+        //     all HTML is replaced/overwritten
+        //     all new CSS/JS is loaded
         document.open();
         document.write(data);
         document.close();
