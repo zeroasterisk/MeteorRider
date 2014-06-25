@@ -34,6 +34,7 @@ var MeteorRider = {
   init: function(currentPath) {
 
     this.meteorUrl = __MeteorRiderConfig__.meteorUrl;
+    this.currentPath = currentPath;
 
     if (! (this.meteorUrl.length > 0)) {
       console.error('MeteorRider: error: unable to determine config.meteorUrl');
@@ -61,12 +62,12 @@ var MeteorRider = {
       console.log(data);
 
       // set 'currentPath' to empty string if not passed
-      currentPath = (typeof currentPath === 'string' ? currentPath : '');
+      this.currentPath = (typeof this.currentPath === 'string' ? this.currentPath : '');
       // set the window.location object correctly so iron-router
       // and other packages that depend on window.location work correctly
       if (typeof window.history.replaceState === 'function') {
         // window.history.replaceState() not supported in all clients
-        window.history.replaceState({}, "", this.meteorUrl + currentPath);
+        window.history.replaceState({}, "", this.meteorUrl + this.currentPath);
       } else {
         // TODO: should we do window.history.add() or something?
       }
@@ -80,6 +81,7 @@ var MeteorRider = {
       document.write(data);
       document.close();
       // trigger the "loaded" events (it'd be nice to do this AFTER JS has loaded
+      // TODO: change these to use plain javascript instead of zepto
       $(document).trigger('DOMContentLoaded');
       $(document).trigger('load');
       $(document).trigger('complete');
