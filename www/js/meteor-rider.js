@@ -38,7 +38,7 @@ var MeteorRider = {
     }
     // trigger request
     $.ajax({
-      url: __MeteorRiderConfig__.meteorUrl,
+      url: meteorUrl,
       cache: false,
       // TODO: split to method on MeteorRider
       error: function( jqXHR, textStatus, errorThrown ) {
@@ -54,10 +54,10 @@ var MeteorRider = {
         data = data.replace(/(href|src|manifest)\=\"\//gm, '$1="' + meteorUrl + '/');
         console.log(meteorUrl);
         console.log(data);
-        
+
         // set 'currentPath' to empty string if not passed
         currentPath = (typeof currentPath === 'string' ? currentPath : '');
-        // set the window.location object correctly so iron-router 
+        // set the window.location object correctly so iron-router
         // and other packages that depend on window.location work correctly
         if (typeof window.history.replaceState === 'function') {
           // window.history.replaceState() not supported in all clients
@@ -65,9 +65,9 @@ var MeteorRider = {
         } else {
           // TODO: should we do window.history.add() or something?
         }
-        
+
         // replace the document with the new document/data
-        //   this is the REAL hijacking... 
+        //   this is the REAL hijacking...
         //     all old JS remains (unless overwritten, name collision)
         //     all HTML is replaced/overwritten
         //     all new CSS/JS is loaded
