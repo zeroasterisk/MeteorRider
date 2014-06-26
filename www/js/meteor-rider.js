@@ -83,7 +83,6 @@ var MeteorRider = {
       document.close();
 
       // trigger the "loaded" events (it'd be nice to do this AFTER JS has loaded
-      // TODO: change these to use plain javascript instead of zepto
       function triggerEvent (eventName) {
         var event = document.createEvent('Event');
         event.initEvent(eventName);
