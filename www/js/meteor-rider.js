@@ -52,8 +52,9 @@ var MeteorRider = {
 
   onSuccess: function () {
     if (request.status >= 200 && request.status < 400) {
+
       var data = request.responseText;
-      ///////////////////
+
       console.log("MeteorRider success");
       console.log(data);
       // update URLs to include domain prefix
@@ -80,11 +81,18 @@ var MeteorRider = {
       document.open();
       document.write(data);
       document.close();
+
       // trigger the "loaded" events (it'd be nice to do this AFTER JS has loaded
       // TODO: change these to use plain javascript instead of zepto
-      $(document).trigger('DOMContentLoaded');
-      $(document).trigger('load');
-      $(document).trigger('complete');
+      function triggerEvent (eventName) {
+        var event = document.createEvent('Event');
+        event.initEvent(eventName);
+        document.dispatchEvent(event);
+      }
+
+      triggerEvent('DOMContentLoaded');
+      triggerEvent('load');
+      triggerEvent('complete');
 
     } else {
       // We reached our target server, but it returned an error
