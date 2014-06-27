@@ -33,17 +33,17 @@ var MeteorRider = {
 
   init: function(currentPath) {
 
-    this.meteorUrl = __MeteorRiderConfig__.meteorUrl;
     this.currentPath = currentPath;
+    var meteorUrl = __MeteorRiderConfig__.meteorUrl;
 
-    if (! (this.meteorUrl.length > 0)) {
+    if (! (meteorUrl.length > 0)) {
       console.error('MeteorRider: error: unable to determine config.meteorUrl');
       return false;
     }
 
     // non zepto/jquery request
     request = new XMLHttpRequest();
-    request.open('GET', this.meteorUrl, true);
+    request.open('GET', meteorUrl, true);
     request.onload = this.onSuccess;
     request.onerror = this.onError;
     request.send();
@@ -52,14 +52,14 @@ var MeteorRider = {
 
   onSuccess: function () {
     if (request.status >= 200 && request.status < 400) {
-
+      var meteorUrl = __MeteorRiderConfig__.meteorUrl;
       var data = request.responseText;
 
       console.log("MeteorRider success");
       console.log(data);
       // update URLs to include domain prefix
-      data = data.replace(/(href|src|manifest)\=\"\//gm, '$1="' + this.meteorUrl + '/');
-      console.log(this.meteorUrl);
+      data = data.replace(/(href|src|manifest)\=\"\//gm, '$1="' + meteorUrl + '/');
+      console.log(meteorUrl);
       console.log(data);
 
       // set 'currentPath' to empty string if not passed
@@ -68,7 +68,7 @@ var MeteorRider = {
       // and other packages that depend on window.location work correctly
       if (typeof window.history.replaceState === 'function') {
         // window.history.replaceState() not supported in all clients
-        window.history.replaceState({}, "", this.meteorUrl + this.currentPath);
+        window.history.replaceState({}, "", meteorUrl + this.currentPath);
       } else {
         // TODO: should we do window.history.add() or something?
       }
@@ -81,7 +81,6 @@ var MeteorRider = {
       document.open();
       document.write(data);
       document.close();
-
       // trigger the "loaded" events (it'd be nice to do this AFTER JS has loaded
       function triggerEvent (eventName) {
         var event = document.createEvent('Event');
