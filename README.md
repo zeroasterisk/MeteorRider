@@ -29,7 +29,7 @@ Installation / Usage
 
 There are only a couple of files, and you can choose to manage them however you like...
 
-**get the code**
+**Get the Code**
 
 ```
 cd tmp
@@ -67,7 +67,7 @@ cp /tmp/MeteorRider/meteor/startup.js startup.js
 You can also look for the `phonegapapp` JS object inside your Meteor app and use it as a means of knowledge about the client.
 
 
-Configuration
+Configuration - Setup MeteorRider in PhoneGap
 --------------
 
 Edit your `index.html` file.
@@ -89,7 +89,7 @@ Set the `phonegapVersion` and `phonegapAppVersion` and whatever else you like.
 This config will be accessible from the `phonegapapp` and `MeteorRider` JS objects.
 
 
-Configuration for PhoneGap
+Configuration - Setup PhoneGap to allow access to Meteor
 --------------
 
 In the PhoneGap configuration, you will have to allow access to the Meteor app
