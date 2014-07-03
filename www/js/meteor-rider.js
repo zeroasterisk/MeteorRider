@@ -30,56 +30,79 @@
 
 //define('MeteorRider', ['jquery'], function($) {
 var MeteorRider = {
+
   init: function(currentPath) {
-    var meteorUrl = __MeteorRiderConfig__.meteorUrl;
-    if (! (meteorUrl.length > 0)) {
+
+    this.currentPath = currentPath;
+    this.meteorUrl = __MeteorRiderConfig__.meteorUrl;
+
+    if (!this.meteorUrl.length > 0) {
       console.error('MeteorRider: error: unable to determine config.meteorUrl');
       return false;
     }
-    // trigger request
-    $.ajax({
-      url: __MeteorRiderConfig__.meteorUrl,
-      cache: false,
-      // TODO: split to method on MeteorRider
-      error: function( jqXHR, textStatus, errorThrown ) {
-        console.error("MeteorRider failure");
-        console.error(jqXHR, textStatus, errorThrown);
-      },
-      // TODO: split to method on MeteorRider
-      success: function( data, textStatus, jqXHR ) {
-        console.log("MeteorRider success");
-        console.log(textStatus);
-        console.log(data);
-        // update URLs to include domain prefix
-        data = data.replace(/(href|src|manifest)\=\"\//gm, '$1="' + meteorUrl + '/');
-        console.log(meteorUrl);
-        console.log(data);
-        
-        // set 'currentPath' to empty string if not passed
-        currentPath = (typeof currentPath === 'string' ? currentPath : '');
-        // set the window.location object correctly so iron-router 
-        // and other packages that depend on window.location work correctly
-        if (typeof window.history.replaceState === 'function') {
-          // window.history.replaceState() not supported in all clients
-          window.history.replaceState({}, "", meteorUrl + currentPath);
-        } else {
-          // TODO: should we do window.history.add() or something?
-        }
-        
-        // replace the document with the new document/data
-        //   this is the REAL hijacking... 
-        //     all old JS remains (unless overwritten, name collision)
-        //     all HTML is replaced/overwritten
-        //     all new CSS/JS is loaded
-        document.open();
-        document.write(data);
-        document.close();
-        // trigger the "loaded" events (it'd be nice to do this AFTER JS has loaded
-        $(document).trigger('DOMContentLoaded');
-        $(document).trigger('load');
-        $(document).trigger('complete');
+
+    // native javascript ajax request
+    request = new XMLHttpRequest();
+    request.open('GET', this.meteorUrl, true);
+    request.onload = this.onSuccess.bind(this);
+    request.onerror = this.onError;
+    request.send();
+
+  },
+
+  onSuccess: function () {
+    if (request.status >= 200 && request.status < 400) {
+
+      var data = request.responseText;
+
+      console.log("MeteorRider success");
+
+      // update URLs to include domain prefix
+      data = data.replace(/(href|src|manifest)\=\"\//gm, '$1="' + this.meteorUrl + '/');
+
+      // set 'currentPath' to empty string if not passed
+      this.currentPath = (typeof this.currentPath === 'string' ? this.currentPath : '');
+
+      // set the window.location object correctly so iron-router
+      // and other packages that depend on window.location work correctly
+      if (typeof window.history.replaceState === 'function') {
+        // window.history.replaceState() not supported in all clients
+        window.history.replaceState({}, "", this.meteorUrl + this.currentPath);
+      } else {
+        // TODO: should we do window.history.add() or something?
       }
-    });
+
+      // replace the document with the new document/data
+      // this is the REAL hijacking...
+      //   all old JS remains (unless overwritten, name collision)
+      //   all HTML is replaced/overwritten
+      //   all new CSS/JS is loaded
+      document.open();
+      document.write(data);
+      document.close();
+
+      // trigger the "loaded" events (it'd be nice to do this AFTER JS has loaded
+      function triggerEvent (eventName) {
+        var event = document.createEvent('Event');
+        event.initEvent(eventName);
+        document.dispatchEvent(event);
+      }
+
+      triggerEvent('DOMContentLoaded');
+      triggerEvent('load');
+      triggerEvent('complete');
+
+    } else {
+      // We reached our target server, but it returned an error
+      console.error(request.statusText);
+    }
+
+  },
+
+  onError: function () {
+    // There was a connection error of some sort
+    console.error("MeteorRider failure");
+    console.error(request.statusText);
   }
 }
 //});
