@@ -1,3 +1,10 @@
+/**
+ * This is where you can customize your phonegapapp's JS
+ * it can track independantly of MeteorRider
+ * there is a stub to setup "on device testing"
+ *   add whatever you like...
+ * at the end, it should do MeteorRider.init()
+ */
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,8 +28,11 @@ phonegapapp = {
   phonegap: true,
   // are we testing PhoneGap or not?
   test: false,
+  // placeholder for config
+  config: {},
   // Application Constructor
-  initialize: function() {
+  initialize: function(config) {
+    this.config = config;
     this.bindEvents();
   },
   // Bind Event Listeners
@@ -51,7 +61,7 @@ phonegapapp = {
   // Setup MeteorRider
   meteorRider: function(currentPath) {
     // set 'currentPath' to empty string if not passed
-    currentPath = typeof currentPath === 'string' ? currentPath : '';
-    MeteorRider.init(currentPath);
+    this.config.currentPath = typeof currentPath === 'string' ? currentPath : '';
+    MeteorRider.init(this.config);
   }
 };

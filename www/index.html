@@ -9,18 +9,19 @@
     </head>
     <body>
         <div class="app">
+
             <h1>Meteor Rider, Loading</h1>
             Loading....
+
             <div id="phonegapapp-test" style="display: none;">
               <!-- put whatever native device testing you want here, easy to toggle in phonegapapp.js -->
             </div>
+
         </div>
         <!-- include the core cordova JS file for your app, like normal -->
         <script type="text/javascript" src="cordova.js"></script>
         <!-- any other custom "on device" code here -->
         <!-- ... -->
-        <!-- jquery or zepto libraries, as a MeteorRider dependancy -->
-        <script type="text/javascript" src="js/zepto.min.js"></script>
         <!-- basics for our phonegapapp (Native, on Device JS) -->
         <script type="text/javascript" src="js/phonegapapp.js"></script>
         <!-- this JS file, the code needed for MeteorRider -->
@@ -37,8 +38,10 @@
             phonegapAppVersion: 0.1
           };
 
-          /**
-            * Start up the phonegap
+           /**
+            * start up the phonegapapp
+            *   this will then start up MeteorRider (unless in testing)
+            *     phonegapapp.test = true;
             */
            phonegapapp.initialize();
         </script>

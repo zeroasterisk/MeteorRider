@@ -31,78 +31,147 @@
 //define('MeteorRider', ['jquery'], function($) {
 var MeteorRider = {
 
-  init: function(currentPath) {
+  config: {},
+  // config: {meteorUrl: "http://example.com", currentPath: "mypath"},
 
-    this.currentPath = currentPath;
-    this.meteorUrl = __MeteorRiderConfig__.meteorUrl;
+  init: function(config) {
 
-    if (!this.meteorUrl.length > 0) {
+    // set config
+    this.setConfig(config);
+
+    // verify that the meteorUrl exists in the config
+    if (!this.config.meteorUrl.length > 0) {
       console.error('MeteorRider: error: unable to determine config.meteorUrl');
       return false;
     }
 
+    // verify the currentPath
+    if (typeof this.config.currentPath != "string") {
+      this.config.currentPath = '';
+    }
+
+    console.log("MeteorRider requesting: " + this.config.meteorUrl);
+
     // native javascript ajax request
     request = new XMLHttpRequest();
-    request.open('GET', this.meteorUrl, true);
+    request.open('GET', this.config.meteorUrl, true);
     request.onload = this.onSuccess.bind(this);
     request.onerror = this.onError;
     request.send();
 
   },
 
-  onSuccess: function () {
-    if (request.status >= 200 && request.status < 400) {
-
-      var data = request.responseText;
-
-      console.log("MeteorRider success");
-
-      // update URLs to include domain prefix
-      data = data.replace(/(href|src|manifest)\=\"\//gm, '$1="' + this.meteorUrl + '/');
-
-      // set 'currentPath' to empty string if not passed
-      this.currentPath = (typeof this.currentPath === 'string' ? this.currentPath : '');
-
-      // set the window.location object correctly so iron-router
-      // and other packages that depend on window.location work correctly
-      if (typeof window.history.replaceState === 'function') {
-        // window.history.replaceState() not supported in all clients
-        window.history.replaceState({}, "", this.meteorUrl + this.currentPath);
-      } else {
-        // TODO: should we do window.history.add() or something?
+  setConfig: function (config) {
+    // support for global config variable if set
+    if (typeof __MeteorRiderConfig__ == "object") {
+      for (var k in __MeteorRiderConfig__) {
+        this.config[k] = __MeteorRiderConfig__[k];
       }
+    }
 
-      // replace the document with the new document/data
-      // this is the REAL hijacking...
-      //   all old JS remains (unless overwritten, name collision)
-      //   all HTML is replaced/overwritten
-      //   all new CSS/JS is loaded
-      document.open();
-      document.write(data);
-      document.close();
-
-      // trigger the "loaded" events (it'd be nice to do this AFTER JS has loaded
-      function triggerEvent (eventName) {
-        var event = document.createEvent('Event');
-        event.initEvent(eventName);
-        document.dispatchEvent(event);
+    // support for passed in config variable if set
+    if (typeof config == "object") {
+      for (var k in config) {
+        this.config[k] = config[k];
       }
+    }
 
-      triggerEvent('DOMContentLoaded');
-      triggerEvent('load');
-      triggerEvent('complete');
-
-    } else {
-      // We reached our target server, but it returned an error
-      console.error(request.statusText);
+    // clean the meteorUrl, remove the trailing slash
+    if (typeof this.config.meteorUrl == "string") {
+      this.config.meteorUrl = this.config.meteorUrl.replace(/\/$/, '');
     }
 
   },
 
+  onSuccess: function () {
+
+    if (!(request.status >= 200 && request.status < 400)) {
+      // We reached our target server, but it returned an error
+      //   (status not between 200-399)
+      console.error("MeteorRider response.status = " + response.status);
+      console.error(request.statusText);
+      return;
+    }
+
+    // We reached our target server, and we got valid HTML response back
+    //   (status is between 200-399)
+    console.log("MeteorRider success");
+
+    // Setup
+    // -----------------------
+    var meteorHtml = request.responseText;
+    // console.log(meteorHtml); // show if you need to debug
+
+    // set 'meteorUrl' to empty string if not passed
+    var meteorUrl = (typeof this.config.meteorUrl === 'string' ? this.config.meteorUrl : '');
+
+    // set 'currentPath' to empty string if not passed
+    var currentPath = (typeof this.config.currentPath === 'string' ? this.config.currentPath : '');
+
+    // clean the currentPath, if it isn't empty and doesn't start with a "/", prefix
+    if (currentPath.length > 0 && currentPath.indexOf('/') != 1) {
+      currentPath = '/' + currentPath;
+    }
+
+    // Setup Window History
+    // -----------------------
+    // set the window.history state
+    //   so iron-router and other packages which depend on window.location work correctly
+    //     window.history.replaceState() not supported in all clients
+    if (typeof window.history.replaceState === 'function') {
+      window.history.replaceState({}, "", meteorUrl + currentPath);
+    } else if (typeof window.history.pushState === 'function') {
+      window.history.pushState({}, "", meteorUrl + currentPath);
+    } else {
+      // TODO: should we do window.history.add() or something?
+    }
+
+    // Alter HTML
+    // -----------------------
+
+    // update URLs in the HTML to include domain prefix
+    //   so Cordova knows "where" to get the Meteor assets from once loaded
+    meteorHtml = meteorHtml.replace(/(href|src|manifest)\=\"\//gm, '$1="' + meteorUrl + '/');
+    // console.log(meteorHtml); // show if you need to debug
+
+
+    // Hijack DOM & Load
+    // -----------------------
+
+    // replace the document with the new document/meteorHtml
+    // this is the REAL hijacking...
+    //   all old JS remains (unless overwritten, name collision)
+    //   all HTML is replaced/overwritten
+    //   all new CSS/JS is loaded
+    document.open();
+    document.write(meteorHtml);
+    document.close();
+
+
+    // Trigger Events on the DOM
+    // -----------------------
+
+    // trigger the "loaded" events
+    //   TODO: it'd be nice to do this AFTER Meteor's JS has loaded (?)
+
+    function triggerEvent (eventName) {
+      var event = document.createEvent('Event');
+      event.initEvent(eventName);
+      document.dispatchEvent(event);
+    }
+
+    triggerEvent('DOMContentLoaded');
+    triggerEvent('load');
+    triggerEvent('complete');
+
+  },
+
   onError: function () {
+
     // There was a connection error of some sort
     console.error("MeteorRider failure");
     console.error(request.statusText);
+
   }
 }
 //});
