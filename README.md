@@ -25,7 +25,7 @@ An approach for integrating [PhoneGap/Cordova](http://phonegap.com/) + [Meteor](
  * *NOTE that all of Cordova's JS remains in the DOM*
 * Meteor connects via DDP to the Meteor Server
 
-![overview](./master/docs/img/how-meteorrider-works.png)
+![overview](./docs/img/how-meteorrider-works.png)
 
 ## It's Easy
 
