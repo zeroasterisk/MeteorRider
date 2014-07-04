@@ -1,42 +1,79 @@
-MeteorRider
-===========
+# MeteorRider
 
 An approach for integrating [PhoneGap/Cordova](http://phonegap.com/) + [Meteor](https://www.meteor.com/).
 
-How it works
-------------
+> I recommend you try out [Chrome Packaged Apps for Mobile](https://github.com/MobileChromeApps/mobile-chrome-apps)
+>  it puts Chrome inside Cordova vs. Webkit (FTW!)
+
+> I have not yet tried out [Cross Walk](https://crosswalk-project.org/#documentation/cordova)
+> but that might be a great option too...?
+
+# How it works
 
 * Cordova loads it's `www/index.html`
 * All Cordova JS loads
-* MeteorRider loads
- * MeteorRider does an AJAX request to your Meteor Server
- * MeteorRider fixes paths in the HTML
- * MeteorRider **replaces** the DOM *("hijacking the DOM")*
+* MeteorRider
+ * Step 1) loading
+  * MeteorRider looks in localStorage to see if we have the last requests HTML
+ * Step 2) requesting
+  * MeteorRider does an AJAX request to your Meteor Server
+  * MeteorRider replaces paths in the HTML response to be full URLs
+ * Step 3) replacing
+  * MeteorRider **replaces** the DOM *("hijacking the DOM")*
+  * MeteorRider stores the HTML for next time's loading screen
 * The DOM loads all the Meteor JS/CSS
+ * *NOTE that all of Cordova's JS remains in the DOM*
 * Meteor connects via DDP to the Meteor Server
 
 ![overview](./master/docs/img/how-meteorrider-works.png)
 
-*NOTE: This is perhaps the "simplest" approach as of right now...*
+## It's Easy
+
+It might sound a bit complex, but really it's pretty simple.
+
+This approach is good for the following reasons
+
+* The JS needed for whatever version of Cordova is always bundled with Cordova,
+  updating is easy.
+* All Cordova API and Plugins' remain available, because the Cordova JS is
+  loaded first, we just add to it.
+* Once setup you can mostly ignore Cordova and only update your Meteor app, all
+  updates get to the client FAST (no app updating needed)
+* iframes are the devil!
+
+If you want an alternative, without the extra AJAX request try out
+
+* [Pack Meteor](https://github.com/SpaceCapsule/packmeteor) is a great way to
+  compile all of what you need to run meteor (client) on [Chrome Packaged Apps for Mobile](https://github.com/MobileChromeApps/mobile-chrome-apps), as long as you're ok with app updating
 
 For more info, [a comparison of approaches](http://zeroasterisk.com/2013/08/22/meteor-phonegapcordova-roundup-fall-2013/)
 
+## Example Project
 
-Installation / Usage
---------------
+* https://github.com/zeroasterisk/MeteorRiderExample0 Cordova 3.5 Android (2 commits)
 
-> NPM installer package under consideration see [this npm package](https://github.com/poetic/meteor-rider) and [this discussion](https://github.com/zeroasterisk/MeteorRider/pull/20)
+
+# Installation / Usage
+
+> NPM installer package under consideration see
+> [this npm package](https://github.com/poetic/meteor-rider) and
+> [this discussion](https://github.com/zeroasterisk/MeteorRider/pull/20)
 
 There are only a couple of files, and you can choose to manage them however you like...
 
-**Get the Code**
+
+
+## Get the Code
 
 ```
 cd tmp
 git clone https://github.com/zeroasterisk/MeteorRider.git MeteorRider
 ```
 
-**On PhoneGap/Cordova**
+## On PhoneGap/Cordova
+
+
+## Option 1) Replace the whole index.html file
 
 You do not have to replace the whole `index.html` file, but it's a reasonable "fast start".
 
@@ -50,12 +87,68 @@ You do not have to replace the whole `index.html` file, but it's a reasonable "f
 cd pathtoyourphonegap/assets/www/
 cp index.html index_old.html
 cp /tmp/MeteorRider/www/index.html index.html
-cp /tmp/MeteorRider/www/js/* js/
+cp /tmp/MeteorRider/www/js/meteor-rider.js js/
 ```
 
 Then edit `index.html` with the appropriate **config** (see Configuration)
 
-**On Meteor**
+## Option 2) Edit the index.html file
+
+There is very little that is "required" to fire up MeteorRider.
+
+This is the minimum you want in your `index.html`
+
+        <script type="text/javascript" src="js/meteor-rider.js"></script>
+        <script type="text/javascript">
+          document.addEventListener('deviceready', function() {
+              MeteorRider.init("http://leaderboard.meteor.com/");
+          }, false);
+        </script>
+
+You just need to call `MeteorRider.init()` when the `deviceready` Event is triggered.
+
+## MeteorRider.config
+
+Here is the default config
+
+    config: {
+      meteorUrl: '',
+      currentPath: '',
+      localStorage: true,
+      // step 1) loading text
+      doLoading: true,
+      // step 2) AJAX request
+      doRequest: true,
+      // step 3) AJAX response (or cache) replacing DOM
+      doReplace: true
+    },
+
+If this is global variable is found, it sets the default config in MeteorRider
+
+    var __MeteorRiderConfig__ = {
+      meteorUrl:  "http://leaderboard.meteor.com/",
+      currentPath: "/",
+      localStorage: true
+    };
+
+You can pass any part of the `config` into `MeteorRider.init()` like so:
+
+    MeteorRider.init({ meteorUrl: "http://leaderboard.meteor.com/", localStorage: false });
+
+You can also just pass in a string, and it will be treated like the meteorUrl *(simplest config)*
+
+    MeteorRider.init("http://leaderboard.meteor.com/");
+
+## MeteorRider.config.meteorUrl (required)
+
+Set the `meteorUrl` property, it should be the full URL to your meteor app.
+
+> NOTE: full public URLs work best.
+> Localhost or internal IPs probably wont work.
+> If Cordova can't load it, it won't work.
+
+
+## On Meteor
 
 You do not have to put anything in Meteor, but if you copy in this `startup.js` file, it will handle *hot code pushes* and reload inside PhoneGap/Cordova, without losing the phonegap context.
 
@@ -64,29 +157,29 @@ cd pathtoyourmeteorapp
 cp /tmp/MeteorRider/meteor/startup.js startup.js
 ```
 
-You can also look for the `phonegapapp` JS object inside your Meteor app and use it as a means of knowledge about the client.
+Obviously, the best bet is to look for the the Cordova APIs directly
 
+```
+if (_.isObject(device)) {
+  console.log(device.cordova);
+}
+```
 
-Configuration - Setup MeteorRider in PhoneGap
---------------
+You can also look for the `MeteorRider` JS object inside your Meteor app and use it as a means of basic knowledge about the client, and status.
 
-Edit your `index.html` file.
+You can also force the `localStorage` to be the "loading" screen on the next
+pageload... (it should be the full HTML you want rendered)
 
-Put in whatever "loading" HTML code you want.  It will be overwritten when MeteorRider takes over.
+```
+MeteorRider.meteorHtml = '<!DOCTYPE html><html><head>' +
+  '<link rel="stylesheet" href="http://leaderboard.meteor.com/6a545450449411b537bd96111c640ce7d7a1092e.css">' +
+  '<script type="text/javascript" src="http://leaderboard.meteor.com/9ebe61ab3cb3e1d4bcd16191207b9f1eb692d512.js"></script>' +
+  '</head><body>' +
+    'My Cool Loading Content Here :)' +
+  '</body></html>';
 
-> NOTE: we may provide a means of caching a loaded Meteor app page, for a future release.
-
-Edit the JS object `__MeteorRiderConfig__`.
-
-Set the `meteorUrl` property, it should be the full URL to your meteor app.
-
-> NOTE: full public URLs work best.
-> Localhost or internal IPs probably wont work.
-> If Cordova can't load it, it won't work.
-
-Set the `phonegapVersion` and `phonegapAppVersion` and whatever else you like.
-
-This config will be accessible from the `phonegapapp` and `MeteorRider` JS objects.
+MeteorRider.replaceStoreHtml();
+```
 
 
 Configuration - Setup PhoneGap to allow access to Meteor
@@ -96,6 +189,11 @@ In the PhoneGap configuration, you will have to allow access to the Meteor app
 url/domain.  Refer to the configuration documentation for your version of
 PhoneGap.
 
+http://docs.phonegap.com/en/edge/guide_appdev_security_index.md.html#Security%20Guide
+
+```
+<access origin="*" />
+```
 
 Common Problems / Tips
 --------------
@@ -111,7 +209,8 @@ Common Problems / Tips
 1. Check the URL, can Cordova get to it?
 2. Check the console from Cordova (Android, iOS, etc)
 
-    MeteorRider requesting: http://example.com
+    MeteorRider requesting
+    MeteorRider url: http://example.com
     MeteorRider response.status = 404
 
 You can uncomment the lines in MeteorRider where it logs the `meteorHtml`
@@ -140,15 +239,14 @@ Goals:
 * PhoneGap version agnostic *(mostly done)*
 * Meteor version agnostic *(mostly done)*
 * Device agnostic *(maybe done ? Android and iOS only ones experiemented with)*
-* Minimal configuration / setup *(needs to be simpler to setup)*
+* Minimal configuration / setup *(mostly done)*
+* Package installer
 
 Tasks:
 
 * invesigate loading just the HEAD data from the AJAX reques
 * invesigate loading the JS files (from Meteor) via AJAX so that we know when completed and could trigger callbacks
-* implement a custom event for "MeteorRiderFinished"
 * implement a warning/alerting system for device/connection state (PhoneGap version dependancies?)
-* we may provide a means of caching a loaded Meteor app's HTML, and using that as a loading page.
 * we may provide a means of setting up an "offline" page
 
 Authors / Acknowledgements

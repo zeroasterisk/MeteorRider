@@ -14,7 +14,7 @@
             Loading....
 
             <div id="phonegapapp-test" style="display: none;">
-              <!-- put whatever native device testing you want here, easy to toggle in phonegapapp.js -->
+              <!-- put whatever native device testing you want here, easy to toggle -->
             </div>
 
         </div>
@@ -22,28 +22,45 @@
         <script type="text/javascript" src="cordova.js"></script>
         <!-- any other custom "on device" code here -->
         <!-- ... -->
-        <!-- basics for our phonegapapp (Native, on Device JS) -->
-        <script type="text/javascript" src="js/phonegapapp.js"></script>
+        <!-- basics for our phonegap app (Native, on Device JS) -->
+        <script type="text/javascript" src="js/index.js"></script>
+        <!-- ... -->
         <!-- this JS file, the code needed for MeteorRider -->
         <script type="text/javascript" src="js/meteor-rider.js"></script>
         <script type="text/javascript">
-          /**
-           * Configuration is very simple... we need to know the meteorUrl
-           * and your Meteor App might want to know what version of phonegap you are on
-           * and your Meteor App might want to know what version of your phonegap app you are on
-           */
-          var __MeteorRiderConfig__ = {
-            meteorUrl:  "http://leaderboard.meteor.com/",
-            phonegapVersion: 3.0,
-            phonegapAppVersion: 0.1
-          };
 
-           /**
-            * start up the phonegapapp
-            *   this will then start up MeteorRider (unless in testing)
-            *     phonegapapp.test = true;
-            */
-           phonegapapp.initialize();
+
+          document.addEventListener('deviceready', function() {
+              // do whatever stuff on deviceready
+              // ....
+
+              // put all your phonegap specific initializer code here
+              // ....
+
+              // if testing phonegap api/plugin, you may want to disable MeteorRider
+              //   in which case you can display your own HTML w/o Meteor
+              // ....
+
+              // ok - go ahead and initialize MeteorRider (go get some!)
+              MeteorRider.init("http://leaderboard.meteor.com/");
+
+          }, false);
+
+          /*** for more control ***
+            var config = {
+              meteorUrl: 'http://leaderboard.meteor.com/',
+              currentPath: '',
+              localStorage: true,
+              // step 1) loading text
+              doLoading: true,
+              // step 2) AJAX request
+              doRequest: true,
+              // step 3) AJAX response (or cache) replacing DOM
+              doReplace: true
+            };
+            MeteorRider.init(config);
+          */
+
         </script>
     </body>
 </html>
