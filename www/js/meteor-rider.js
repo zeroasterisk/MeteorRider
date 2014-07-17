@@ -303,7 +303,7 @@ var MeteorRider = {
    * @return void
    */
   replaceHistoryState: function() {
-    var url = this.config.meteorUrl + this.config.currentPath
+    var url = this.config.meteorUrl + this.config.currentPath;
     if (typeof window.history.replaceState === 'function') {
       window.history.replaceState({}, "", url);
       return;
