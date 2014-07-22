@@ -13,12 +13,12 @@ An approach for integrating [PhoneGap/Cordova](http://phonegap.com/) + [Meteor](
 * Cordova loads it's `www/index.html`
 * All Cordova JS loads
 * MeteorRider
- * Step 1) loading
+ * **Step 1) loading**
   * MeteorRider looks in localStorage to see if we have the last requests HTML
- * Step 2) requesting
+ * **Step 2) requesting**
   * MeteorRider does an AJAX request to your Meteor Server
   * MeteorRider replaces paths in the HTML response to be full URLs
- * Step 3) replacing
+ * **(Step 3) replacing**
   * MeteorRider **replaces** the DOM *("hijacking the DOM")*
   * MeteorRider stores the HTML for next time's loading screen
 * The DOM loads all the Meteor JS/CSS
@@ -53,7 +53,7 @@ For more info, [a comparison of approaches](http://zeroasterisk.com/2013/08/22/m
 * https://github.com/zeroasterisk/MeteorRiderExample0 Cordova 3.5 Android (2 commits)
 
 
-# Installation / Usage
+## Installation / Usage
 
 > NPM installer package under consideration see
 > [this npm package](https://github.com/poetic/meteor-rider) and
@@ -61,19 +61,19 @@ For more info, [a comparison of approaches](http://zeroasterisk.com/2013/08/22/m
 
 There are only a couple of files, and you can choose to manage them however you like...
 
-
-
-## Get the Code
+### Get the Code
 
 ```
 cd tmp
 git clone https://github.com/zeroasterisk/MeteorRider.git MeteorRider
 ```
 
-## On PhoneGap/Cordova
+----
+
+## On PhoneGap/Cordova - Setup
 
 
-## Option 1) Replace the whole index.html file
+### Option 1) Replace the whole index.html file
 
 You do not have to replace the whole `index.html` file, but it's a reasonable "fast start".
 
@@ -92,7 +92,7 @@ cp /tmp/MeteorRider/www/js/meteor-rider.js js/
 
 Then edit `index.html` with the appropriate **config** (see Configuration)
 
-## Option 2) Edit the index.html file
+### Option 2) Edit the index.html file
 
 There is very little that is "required" to fire up MeteorRider.
 
@@ -107,7 +107,7 @@ This is the minimum you want in your `index.html`
 
 You just need to call `MeteorRider.init()` when the `deviceready` Event is triggered.
 
-## MeteorRider.config
+### MeteorRider.config 
 
 Here is the default config
 
@@ -139,7 +139,7 @@ You can also just pass in a string, and it will be treated like the meteorUrl *(
 
     MeteorRider.init("http://leaderboard.meteor.com/");
 
-## MeteorRider.config.meteorUrl (required)
+#### MeteorRider.config.meteorUrl (required)
 
 Set the `meteorUrl` property, it should be the full URL to your meteor app.
 
@@ -147,6 +147,7 @@ Set the `meteorUrl` property, it should be the full URL to your meteor app.
 > Localhost or internal IPs probably wont work.
 > If Cordova can't load it, it won't work.
 
+----
 
 ## On Meteor
 
@@ -181,33 +182,39 @@ MeteorRider.meteorHtml = '<!DOCTYPE html><html><head>' +
 MeteorRider.replaceStoreHtml();
 ```
 
+----
 
-Configuration - Setup PhoneGap to allow access to Meteor
---------------
+## Meteor Packages for PhoneGap/Cordova
 
-In the PhoneGap configuration, you will have to allow access to the Meteor app
-url/domain.  Refer to the configuration documentation for your version of
-PhoneGap.
+There are probably many more than this list, [let me know about `em](https://twitter.com/zeroasterisk).
 
-http://docs.phonegap.com/en/edge/guide_appdev_security_index.md.html#Security%20Guide
+### OAuth for Meteor + MeteorRider + PhoneGap/Cordova
 
-```
-<access origin="*" />
-```
+Sadly this should "just work" out-of-the-box, but as of now, it is 
+[frought](https://github.com/AdamBrodzinski/meteor-phonegap-oauth/pull/5)
+with
+[peril](https://github.com/zeroasterisk/MeteorRider/issues/16).
 
-Common Problems / Tips
---------------
+Luckily there is an excellent project alive which is a very easy `mrt add phonegap-oauth` away. 
+
+Check it out here [meteor-phonegap-oauth](https://github.com/AdamBrodzinski/meteor-phonegap-oauth)
+
+
+----
+
+## Common Problems / Tips
 
 **PhoneGap/Cordova Issues? Plugin Issues?**
 
-1. Stop `MeteorRider` (comment it out, or setup `phonegapapp.test = true;`)
+1. Stop `MeteorRider` (comment it out, or setup testing conditional bypass)
 2. Run whatever you're doing with just `index.html` and "on device" JS (without Meteor)
-3. Still not working as expected?  Enable MeteorRider again and look for a namespace collision...
+3. Working locally but not with MeteorRider?  Enable MeteorRider again and look for a namespace collision...
 
 **Not Loading Meteor?**
 
 1. Check the URL, can Cordova get to it?
-2. Check the console from Cordova (Android, iOS, etc)
+2. Try loading a static file from your Meteor URL (from the `/public/` folder) as the `meteorUrl`.
+3. Check the console from Cordova (Android, iOS, etc)
 
     MeteorRider requesting
     MeteorRider url: http://example.com
@@ -215,6 +222,17 @@ Common Problems / Tips
 
 You can uncomment the lines in MeteorRider where it logs the `meteorHtml`
   (the HTML content from Meteor).
+
+
+### PhoneGap/Cordova needs to be setup to allow access to Meteor
+
+In older PhoneGap installs or if you've restrictred `<access>`, may have to allow access to the Meteor app url/domain.  Refer to the configuration documentation for your version of PhoneGap.
+
+http://docs.phonegap.com/en/edge/guide_appdev_security_index.md.html#Security%20Guide
+
+```
+<access origin="*" />
+```
 
 
 In the Wild
