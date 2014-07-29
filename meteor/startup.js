@@ -4,9 +4,11 @@ if (Meteor.isClient) {
     if (typeof cordova === 'undefined') {
       return;
     }
-    // we have a cordova app
-    //   attempt to setup a callback handler for hot reloads
-
+    // verify if we have a MeteorRider object too
+    if (typeof MeteorRider === 'undefined') {
+      return;
+    }
+    // attempt to setup a callback handler for hot reloads
     if (typeof Reload !== 'undefined' && typeof Reload._onMigrate === 'function') {
       // this is the newer method, internal?
       Reload._onMigrate('cordovaapp', function () {
