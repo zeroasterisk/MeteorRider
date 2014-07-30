@@ -1,24 +1,28 @@
 if (Meteor.isClient) {
   Meteor.startup(function () {
-    if (typeof phonegapapp === 'undefined') {
+    // verify if we are within a cordova wrapper
+    if (typeof cordova === 'undefined') {
       return;
     }
-    // we have a phonegap app
-    //   attempt to setup a callback handler for hot reloads
-    
-    if (typeof Reload._onMigrate === 'function') {
+    // verify if we have a MeteorRider object too
+    if (typeof MeteorRider === 'undefined') {
+      return;
+    }
+    // attempt to setup a callback handler for hot reloads
+    if (typeof Reload !== 'undefined' && typeof Reload._onMigrate === 'function') {
       // this is the newer method, internal?
-      Reload._onMigrate('phonegapapp', function () {
-        phonegapapp.meteorRider();
+      Reload._onMigrate('cordovaapp', function () {
+        MeteorRider.init();
         return [false];
       });
       return;
     }
-    
+
     if (typeof Meteor._reload.onMigrate === 'function') {
       // this is the older method, deprecated?
-      Meteor._reload.onMigrate('phonegapapp', function () {
-        phonegapapp.meteorRider();
+      // it does not seem to be deprecated in meteor 0.8.2
+      Meteor._reload.onMigrate('cordovaapp', function () {
+        MeteorRider.init();
         return [false];
       });
       return;

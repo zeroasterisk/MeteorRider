@@ -303,6 +303,10 @@ var MeteorRider = {
    * @return void
    */
   replaceHistoryState: function() {
+    if (typeof window === 'undefined' || typeof window.history === 'undefined') {
+      console.log("MeteorRider replaceHistoryState SKIPPED no window.history");
+      return;
+    }
     var url = this.config.meteorUrl + this.config.currentPath;
     if (typeof window.history.replaceState === 'function') {
       window.history.replaceState({}, "", url);
@@ -313,6 +317,9 @@ var MeteorRider = {
       return;
     }
     // TODO: should we do window.history.add() or something?
+    console.log("MeteorRider replaceHistoryState SKIPPED no window.history. replaceState or pushState");
+    console.log("typeof window.history.replaceState " + typeof window.history.replaceState);
+    console.log("typeof window.history.pushState " + typeof window.history.pushState);
   },
 
   /**
