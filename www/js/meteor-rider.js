@@ -307,19 +307,14 @@ var MeteorRider = {
       console.log("MeteorRider replaceHistoryState SKIPPED no window.history");
       return;
     }
-    var url = this.config.meteorUrl + this.config.currentPath;
     if (typeof window.history.replaceState === 'function') {
-      window.history.replaceState({}, "", url);
+      window.history.replaceState({}, "", this.config.currentPath);
       return;
     }
     if (typeof window.history.pushState === 'function') {
-      window.history.pushState({}, "", url);
+      window.history.pushState({}, "", this.config.currentPath);
       return;
     }
-    // TODO: should we do window.history.add() or something?
-    console.log("MeteorRider replaceHistoryState SKIPPED no window.history. replaceState or pushState");
-    console.log("typeof window.history.replaceState " + typeof window.history.replaceState);
-    console.log("typeof window.history.pushState " + typeof window.history.pushState);
   },
 
   /**
