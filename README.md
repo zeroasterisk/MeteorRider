@@ -2,19 +2,15 @@
 
 An approach for integrating [PhoneGap/Cordova](http://phonegap.com/) + [Meteor](https://www.meteor.com/).
 
-> I recommend you try out [Chrome Packaged Apps for Mobile](https://github.com/MobileChromeApps/mobile-chrome-apps)
->  it puts Chrome inside Cordova vs. Webkit (FTW!)
-
-> I have not yet tried out [Cross Walk](https://crosswalk-project.org/#documentation/cordova)
-> but that might be a great option too...?
+*Your Meteor web app (real time everything), inside a Cordova shell (native APIs) = awesome!*
 
 # How it works
 
-* Cordova loads it's `www/index.html`
-* All Cordova JS loads
+* Cordova loads it's normal, compiled `www/index.html`
+ * All normal, compiled Cordova JS loads *(this ensures Cordova API versions are maintained, decoupled from Meteor)*
 * MeteorRider
  * **Step 1) loading**
-  * MeteorRider looks in localStorage to see if we have the last requests HTML
+  * MeteorRider looks in localStorage to see if we have cached the last requested HTML
  * **Step 2) requesting**
   * MeteorRider does an AJAX request to your Meteor Server
   * MeteorRider replaces paths in the HTML response to be full URLs
@@ -22,7 +18,8 @@ An approach for integrating [PhoneGap/Cordova](http://phonegap.com/) + [Meteor](
   * MeteorRider **replaces** the DOM *("hijacking the DOM")*
   * MeteorRider stores the HTML for next time's loading screen
 * The DOM loads all the Meteor JS/CSS
- * *NOTE that all of Cordova's JS remains in the DOM*
+ * *NOTE that all of Cordova's JS remains in the DOM (from before)*
+ * *future-feature: planning on caching and inlining this*
 * Meteor connects via DDP to the Meteor Server
 
 ![overview](./docs/img/how-meteorrider-works.png)
@@ -44,14 +41,36 @@ This approach is good for the following reasons
 If you want an alternative, without the extra AJAX request try out
 
 * [Pack Meteor](https://github.com/SpaceCapsule/packmeteor) is a great way to
-  compile all of what you need to run meteor (client) on [Chrome Packaged Apps for Mobile](https://github.com/MobileChromeApps/mobile-chrome-apps), as long as you're ok with app updating
+  compile all of what you need to run meteor (client) on [Chrome Packaged Apps for Mobile](https://github.com/MobileChromeApps/mobile-chrome-apps) (etc)
+ * upside: super-fast, all Meteor assets live local in the Mobile App
+ * upside: build script gets all Meteor JS & assets *(well managed)*
+ * upside: chrome APIs available if you do [Chrome Packaged Apps for Mobile](https://github.com/MobileChromeApps/mobile-chrome-apps)
+ * upside: decent "offline" support
+ * downside: slightly more complicated release proccess
+ * downside: you have to re-release the mobile application for every update to your Meteor App
+ * downside: you have coordinate your entire user base's apps for releases if your app changes (since they have an old version installed)
+* [Meteor Cordova Loader](https://github.com/andrewreedy/meteor-cordova-loader) is another great alternative, basically a super-lazy-loader option
+ * upside: faster initial load, no Cordova initial load screen
+ * upside: load script gets all Cordova core & plugin JS from Meteor *(well managed)*
+ * downside: you can [basically never update versions of Cordova after release](https://github.com/andrewreedy/meteor-cordova-loader/issues/16) because client versions are unknown
+ * downside: like above, you can never add or upgrade a plugin for the same reasons, the client "version" is lost
+ * downside: no "offline" support *(though, MeteorRider doesn't offer much for that either)*
 
 For more info, [a comparison of approaches](http://zeroasterisk.com/2013/08/22/meteor-phonegapcordova-roundup-fall-2013/)
 
-## Example Project
+## Example Projects
 
 * https://github.com/zeroasterisk/MeteorRiderExample0 Cordova 3.5 Android (2 commits)
-
+ * This is a very basic example, showing how easy it is to implement
+ * You can edit the URL to the Meteor App and this will work as a totally functional shell for your app
+ * You can add platforms like *iOS* in the normal Cordova way and be up and working on them in seconds
+* https://github.com/zeroasterisk/MeteorRiderExample-CrossWalk CrossWalk + Cordova 3.5 ~ Android (1 commit)
+ * **Did you know?** [CrossWalk](https://crosswalk-project.org/#documentation/cordova) is the project behind
+   [Chrome Packaged Apps for Mobile](https://github.com/MobileChromeApps/mobile-chrome-apps), 
+   taking **Chromium** to the mobile device *(so you aren't stuck with old-ass-WebKit on Android)*
+ * this is definitely my recommendation for performance on Android
+ * You can edit the URL to the Meteor App and this will work as a totally functional shell for your app
+ * Only Android :(
 
 ## Installation / Usage
 
@@ -254,10 +273,10 @@ The combination is very powerful, and I have high hope for the future.
 
 Goals:
 
-* PhoneGap version agnostic *(mostly done)*
+* PhoneGap version agnostic *(done)*
 * Meteor version agnostic *(mostly done)*
 * Device agnostic *(maybe done ? Android and iOS only ones experiemented with)*
-* Minimal configuration / setup *(mostly done)*
+* Minimal configuration / setup *(done)*
 * Package installer
 
 Tasks:
