@@ -1,3 +1,15 @@
+# DEPRECATION NOTICE
+
+Meteor core now supports a better Meteor + Cordova integration approach.  
+
+This project was useful while that didn't exist, but Meteor's integration is great, use it.
+
+* https://www.meteor.com/try/7
+* http://docs.meteor.com/#/full/Cordova-depends
+* http://docs.meteor.com/#/full/mobileconfigjs
+
+----
+
 # MeteorRider
 
 An approach for integrating [PhoneGap/Cordova](http://phonegap.com/) + [Meteor](https://www.meteor.com/).
